@@ -23,6 +23,7 @@ int val = 0;                    // variable for reading the pin status
 #define WIFI_SSID "TP-LINK_3880"
 #define WIFI_PASSWORD "sid123456"
 
+int n = 0;
 
 void setup(){
   Serial.begin(9600);     // Communication started with 9600 baud
@@ -97,5 +98,16 @@ float h = dht.readHumidity();
   Serial.println(h);
   //delay(200);
 delay(1000);
+// append a new value to /logs
+  String name = Firebase.pushInt("logs", n++);
+  // handle error
+  if (Firebase.failed()) {
+      Serial.print("pushing /logs failed:");
+      Serial.println(Firebase.error());  
+      return;
+  }
+  Serial.print("pushed: /logs/");
+  Serial.println(name);
+  delay(1000);
 
 }
