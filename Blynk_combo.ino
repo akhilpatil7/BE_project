@@ -5,7 +5,7 @@
 #define BLYNK_PRINT Serial
 char ssid[] = "TP-LINK_3880";
 char pass[] = "sid123456";
-char auth[] = "3f72f769a9f34eaaa733d3df5d3dcfb4";
+char auth[] = "d1c6834bcb7241c990c50e85127c0a24";
 //DHT
 #define DHTPIN 0    // Data Pin of DHT 11 , for NodeMCU D5 GPIO no. is 14
 
@@ -35,12 +35,19 @@ void myTimerEvent(){
   
   Blynk.virtualWrite(V0,distance);
    Blynk.virtualWrite(V4,sensor);
-  Blynk.virtualWrite(V1,pirsensor);
+ // Blynk.virtualWrite(V1,pirsensor);
   Blynk.virtualWrite(V3,dht.readHumidity());
   Blynk.virtualWrite(V2,dht.readTemperature());
   Serial.println("Timer Event Executed");
   }
 
+BLYNK_READ(V1) {
+  Blynk.virtualWrite(V1, pirsensor);
+}
+
+BLYNK_READ(V5) {
+  Blynk.virtualWrite(V5, millis());
+}
 void setup(){
   Serial.begin(9600);     // Communication started with 9600 baud
   //Serial.println ("WiFi Connected!");
