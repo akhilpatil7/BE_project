@@ -18,8 +18,8 @@ int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;                    // variable for reading the pin status
 
 
-#define FIREBASE_HOST "nodemcupir.firebaseio.com"
-#define FIREBASE_AUTH "1TheXTgjPcbxFv8Akmjmld6rcFm5l3yxbaiBIsnG"
+#define FIREBASE_HOST "aquaponics-7796.firebaseio.com"
+#define FIREBASE_AUTH "b8IeSWlnOeg1XiUjCxE0gpWMP3uRcnyLosyXDRzH"
 #define WIFI_SSID "TP-LINK_3880"
 #define WIFI_PASSWORD "sid123456"
 
