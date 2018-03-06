@@ -28,17 +28,17 @@ BlynkTimer timer;
 #define FIREBASE_AUTH "b8IeSWlnOeg1XiUjCxE0gpWMP3uRcnyLosyXDRzH"
 #define WIFI_SSID "TP-LINK_3880"
 #define WIFI_PASSWORD "sid123456"
-
+int sensor;
 int n = 0;
-
+String pirsensor;
 void myTimerEvent(){
   
-  Blynk.virtualWrite(V0,digitalRead(13));
-   Blynk.virtualWrite(V4,analogRead(A0));
-  Blynk.virtualWrite(V1,digitalRead(5));
+  Blynk.virtualWrite(V0,distance);
+   Blynk.virtualWrite(V4,sensor);
+  Blynk.virtualWrite(V1,pirsensor);
   Blynk.virtualWrite(V3,dht.readHumidity());
   Blynk.virtualWrite(V2,dht.readTemperature());
-  
+  Serial.println("Timer Event Executed");
   }
 
 void setup(){
@@ -63,7 +63,7 @@ Blynk.begin(auth,ssid,pass);
    timer.setInterval(1000L,myTimerEvent);
 }
 void loop(){//water_sensor
-int sensor=analogRead(A0); // Incoming analog signal read and appointed sensor
+ sensor=analogRead(A0); // Incoming analog signal read and appointed sensor
 //Serial.println(sensor);   //Wrote serial port
 Firebase.setFloat ("Sensor",sensor);
 //pir_sensor
@@ -73,6 +73,7 @@ val = digitalRead(inputPin);  // read input value
     if (pirState == LOW) { 
       // we have just turned on
       Firebase.setString("message", "Motion Started");
+      pirsensor = "Motion Started";
       // We only want to print on the output change, not state
       pirState = HIGH;
       Serial.print("BC");
@@ -82,6 +83,7 @@ val = digitalRead(inputPin);  // read input value
     if (pirState == HIGH){
       // we have just turned of
       Firebase.setString("message", "Motion Ended");
+      pirsensor = "Motion Ended";
       // We only want to print on the output change, not state
       pirState = LOW;
       Serial.print("MC");
