@@ -31,8 +31,13 @@ BlynkTimer timer;
 int sensor;
 int n = 0;
 String pirsensor;
+String pinData;
 WidgetLCD lcd(V1);
 
+BLYNK_WRITE(V1){
+  pinData = param.asString();
+  }
+  
 void myTimerEvent(){
   
   Blynk.virtualWrite(V0,distance);
@@ -41,9 +46,11 @@ void myTimerEvent(){
   Blynk.virtualWrite(V3,h);
   Blynk.virtualWrite(V2,t);
   lcd.clear(); //Use it to clear the LCD Widget
-  lcd.print(4, 0, pirsensor); // use: (position X: 0-15, position Y: 0-1, "Message you want to print")
+  lcd.print(4, 0, pirsensor);
+  lcd.print(4 , 1 , pinData);// use: (position X: 0-15, position Y: 0-1, "Message you want to print")
   Serial.println("Timer Event Executed");
   }
+
 
 //BLYNK_READ(V1) {
 //  Blynk.virtualWrite(V1, pirsensor);
