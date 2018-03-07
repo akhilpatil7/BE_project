@@ -13,10 +13,11 @@ int output = 7;
 int th=500; // Set threshold level.
 String airqual;
 
-BLYNK_READ(V1) {
-  Blynk.virtualWrite(V1, airqual);
-}
+//BLYNK_READ(V1) {
+//  Blynk.virtualWrite(V1, airqual);
+//}
 
+WidgetLCD lcd(V1);
 
 void setup()
 {
@@ -35,6 +36,9 @@ if(analogRead(input)>th)
 Serial.println("HIGH");
 airqual = "HIGH";
 Firebase.setString("Air","HIGH");
+ lcd.clear(); //Use it to clear the LCD Widget
+  lcd.print(4, 0, "HIGH"); // use: (position X: 0-15, position Y: 0-1, "Message you want to print")
+ // lcd.print(4, 1, "World");
 }
 else
 {
@@ -42,6 +46,9 @@ else
 Serial.println("LOW");
 airqual = "LOW";
 Firebase.setString("Air","LOW");
+lcd.clear(); //Use it to clear the LCD Widget
+  lcd.print(4, 0, "LOW"); // use: (position X: 0-15, position Y: 0-1, "Message you want to print")
+ 
 }
 delay(500);
  Blynk.run();
