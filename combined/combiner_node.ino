@@ -1,6 +1,11 @@
+#include <BlynkSimpleEsp8266.h>
 #include <FirebaseArduino.h>
 #include "DHT.h"
 #include  <ESP8266WiFi.h>
+#define BLYNK_PRINT Serial
+char ssid[] = "TP-LINK_3880";
+char pass[] = "sid123456";
+char auth[] = "3f72f769a9f34eaaa733d3df5d3dcfb4";
 //DHT
 #define DHTPIN 0    // Data Pin of DHT 11 , for NodeMCU D5 GPIO no. is 14
 
@@ -12,24 +17,47 @@ const int echoPin = 13;
 // defines variables
 long duration;
 int distance;
-
+float h , t;
 int inputPin = 5;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;                    // variable for reading the pin status
+BlynkTimer timer;
 
 
-#define FIREBASE_HOST "nodemcupir.firebaseio.com"
-#define FIREBASE_AUTH "1TheXTgjPcbxFv8Akmjmld6rcFm5l3yxbaiBIsnG"
+#define FIREBASE_HOST "aquaponics-7796.firebaseio.com"
+#define FIREBASE_AUTH "b8IeSWlnOeg1XiUjCxE0gpWMP3uRcnyLosyXDRzH"
 #define WIFI_SSID "TP-LINK_3880"
 #define WIFI_PASSWORD "sid123456"
+int sensor;
+int n = 0;
+String pirsensor;
+WidgetLCD lcd(V1);
 
+void myTimerEvent(){
+  
+  Blynk.virtualWrite(V0,distance);
+   Blynk.virtualWrite(V4,sensor);
+//  Blynk.virtualWrite(V1,pirsensor);
+  Blynk.virtualWrite(V3,h);
+  Blynk.virtualWrite(V2,t);
+  lcd.clear(); //Use it to clear the LCD Widget
+  lcd.print(4, 0, pirsensor); // use: (position X: 0-15, position Y: 0-1, "Message you want to print")
+  Serial.println("Timer Event Executed");
+  }
 
+//BLYNK_READ(V1) {
+//  Blynk.virtualWrite(V1, pirsensor);
+//}
+
+//BLYNK_READ(V5) {
+//  Blynk.virtualWrite(V5, millis());
+//}
 void setup(){
   Serial.begin(9600);     // Communication started with 9600 baud
   //Serial.println ("WiFi Connected!");
 pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
 pinMode(echoPin, INPUT); // Sets the echoPin as an Input
-
+Blynk.begin(auth,ssid,pass);
   Firebase.begin(FIREBASE_HOST,FIREBASE_AUTH);
  pinMode(inputPin, INPUT);     // declare sensor as input
   //Serial.begin(9600);
@@ -43,10 +71,10 @@ pinMode(echoPin, INPUT); // Sets the echoPin as an Input
   Serial.println ("");
   Serial.println ("WiFi Connected!");
   //Firebase.begin(FIREBASE_HOST,FIREBASE_AUTH);
-   
+   timer.setInterval(1000L,myTimerEvent);
 }
 void loop(){//water_sensor
-int sensor=analogRead(A0); // Incoming analog signal read and appointed sensor
+ sensor=analogRead(A0); // Incoming analog signal read and appointed sensor
 //Serial.println(sensor);   //Wrote serial port
 Firebase.setFloat ("Sensor",sensor);
 //pir_sensor
@@ -55,7 +83,8 @@ val = digitalRead(inputPin);  // read input value
     //digitalWrite(ledPin, HIGH);  // turn LED ON
     if (pirState == LOW) { 
       // we have just turned on
-      Firebase.setString("message", "hello world");
+      Firebase.setString("message", "Motion Started");
+      pirsensor = "Motion Started";
       // We only want to print on the output change, not state
       pirState = HIGH;
       Serial.print("BC");
@@ -64,7 +93,8 @@ val = digitalRead(inputPin);  // read input value
     //digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH){
       // we have just turned of
-      Firebase.setString("message", "motion ended");
+      Firebase.setString("message", "Motion Ended");
+      pirsensor = "Motion Ended";
       // We only want to print on the output change, not state
       pirState = LOW;
       Serial.print("MC");
@@ -88,14 +118,26 @@ Serial.println(distance);
 Firebase.setFloat ("Distance",distance);
  
 //delay(200);}
-float h = dht.readHumidity();
+ h = dht.readHumidity();
   
-  float t = dht.readTemperature();  // Reading temperature as Celsius (the default)
+   t = dht.readTemperature();  // Reading temperature as Celsius (the default)
   Firebase.setFloat ("Temp",t);
   Firebase.setFloat ("Humidity",h);
   Serial.println(t);
   Serial.println(h);
   //delay(200);
 delay(1000);
-
+// append a new value to /logs
+  String name = Firebase.pushInt("logs", n++);
+  // handle error
+  if (Firebase.failed()) {
+      Serial.print("pushing /logs failed:");
+      Serial.println(Firebase.error());  
+      return;
+  }
+  Serial.print("pushed: /logs/");
+  Serial.println(name);
+  delay(1000);
+  Blynk.run();
+  timer.run();
 }
