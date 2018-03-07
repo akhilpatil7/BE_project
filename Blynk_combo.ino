@@ -17,7 +17,7 @@ const int echoPin = 13;
 // defines variables
 long duration;
 int distance;
-
+float t, h;
 int inputPin = 5;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;                    // variable for reading the pin status
@@ -36,8 +36,8 @@ void myTimerEvent(){
   Blynk.virtualWrite(V0,distance);
    Blynk.virtualWrite(V4,sensor);
  // Blynk.virtualWrite(V1,pirsensor);
-  Blynk.virtualWrite(V3,dht.readHumidity());
-  Blynk.virtualWrite(V2,dht.readTemperature());
+  Blynk.virtualWrite(V3,h);
+  Blynk.virtualWrite(V2,t);
   Serial.println("Timer Event Executed");
   }
 
@@ -114,9 +114,9 @@ Serial.println(distance);
 Firebase.setFloat ("Distance",distance);
  
 //delay(200);}
-float h = dht.readHumidity();
+ h = dht.readHumidity();
   
-  float t = dht.readTemperature();  // Reading temperature as Celsius (the default)
+   t = dht.readTemperature();  // Reading temperature as Celsius (the default)
   Firebase.setFloat ("Temp",t);
   Firebase.setFloat ("Humidity",h);
   Serial.println(t);
