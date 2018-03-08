@@ -44,8 +44,8 @@ WidgetLCD lcd(V1);
   Blynk.virtualWrite(V3,h);
   Blynk.virtualWrite(V2,t);
   lcd.clear(); //Use it to clear the LCD Widget
-  lcd.print(4, 0, pirsensor);
-  lcd.print(4,1,airqual);
+  lcd.print(2, 0, pirsensor);
+  lcd.print(2,1,airqual);
   Serial.println("Timer Event Executed");
   }
 
@@ -109,14 +109,14 @@ if(analogRead(A0)>th)
 {
 //digitalWrite(output,HIGH);
 Serial.println("HIGH");
-airqual = "HIGH";
+airqual = "Pollutants: HIGH";
 Firebase.setString("Air","HIGH");
 }
 else
 {
 //digitalWrite(output,LOW);
 Serial.println("LOW");
-airqual = "LOW";
+airqual = "Pollutants: LOW";
 Firebase.setString("Air","LOW");
 }
 digitalWrite(air,LOW);
